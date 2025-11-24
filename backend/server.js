@@ -3,6 +3,15 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 
+import testRoute from "./routes/testRoute.js";
+import registerRoutes from "./routes/registerRoutes.js";
+import loginRoutes from "./routes/loginRoutes.js";
+import complaintRoutes from "./routes/complaintRoutes.js";
+import investigatorRoutes from "./routes/investigatorRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
+
+
 dotenv.config();
 
 const app = express();
@@ -34,10 +43,25 @@ mongoose.connect(process.env.MONGO_URI)
     process.exit(1);
   });
 
-// Routes
+// Mount your test route AFTER middleware
+app.use("/api/test", testRoute);
+
+// Test root route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
+app.get("/check", (req, res) => {
+  res.send("Backend is working!");
+});
+
+app.use("/api", registerRoutes);
+app.use("/api", loginRoutes);
+app.use("/api", complaintRoutes);
+app.use("/api", investigatorRoutes);
+app.use("/api", profileRoutes);
+app.use("/api", feedbackRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
