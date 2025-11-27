@@ -9,10 +9,19 @@ import {
 
 const router = express.Router();
 
-router.post("/investigators", createInvestigator);
-router.get("/investigators", getInvestigators);
-router.get("/investigators/:id", getInvestigatorById);
-router.put("/investigators/:id", updateInvestigator);
-router.delete("/investigators/:id", deleteInvestigator);
+// CREATE investigator
+router.post("/", createInvestigator);
+
+// GET all investigators
+router.get("/", getInvestigators);
+
+// GET a single investigator
+router.get("/:id", getInvestigatorById);
+
+// UPDATE investigator
+router.put("/:id", updateInvestigator);
+
+// DELETE investigator
+router.delete("/:id", deleteInvestigator);
 
 export default router;

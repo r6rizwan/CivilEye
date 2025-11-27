@@ -51,18 +51,3 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-export const createAdmin = async (req, res) => {
-    try {
-        const admin = await Login.create({
-            email: "admin@crimeportal.com",
-            password: "Admin@123",
-            utype: "Admin"
-        });
-
-        res.json({ message: "Admin created", admin });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-

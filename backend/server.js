@@ -7,6 +7,8 @@ import registerRoutes from "./routes/registerRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
+import investigatorRoutes from "./routes/investigatorRoutes.js";
+
 // import investigatorRoutes from "./routes/investigatorRoutes.js";
 // import profileRoutes from "./routes/profileRoutes.js";
 // import feedbackRoutes from "./routes/feedbackRoutes.js";
@@ -52,8 +54,8 @@ app.use("/api", registerRoutes);
 app.use("/api", loginRoutes);
 app.use("/api", passwordRoutes);
 app.use("/api/complaint", complaintRoutes);
+app.use("/api/investigators", investigatorRoutes);
 
-// app.use("/api", investigatorRoutes);
 // app.use("/api", profileRoutes);
 // app.use("/api", feedbackRoutes);
 

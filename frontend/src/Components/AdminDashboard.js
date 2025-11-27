@@ -16,7 +16,6 @@ export default function AdminDashboard() {
         const fetchStats = async () => {
             try {
                 const res = await axios.get("http://localhost:7000/api/complaint/all");
-
                 const complaints = res.data;
 
                 setStats({
@@ -29,7 +28,7 @@ export default function AdminDashboard() {
 
                 setLoading(false);
             } catch (error) {
-                console.error("Failed to load admin stats:", error);
+                console.error("Admin Dashboard Error:", error);
                 setLoading(false);
             }
         };
@@ -37,38 +36,36 @@ export default function AdminDashboard() {
         fetchStats();
     }, []);
 
-    if (loading) {
-        return <p style={{ textAlign: "center", marginTop: "80px" }}>Loading dashboard...</p>;
-    }
+    if (loading) return <h3 style={{ textAlign: "center" }}>Loading Dashboard...</h3>;
 
     return (
-        <div style={styles.page}>
-            <h2 style={styles.title}>Admin Dashboard</h2>
+        <div>
+            <h1 style={styles.title}>Dashboard Overview</h1>
 
             <div style={styles.grid}>
-                <div style={styles.card}>
-                    <p style={styles.cardTitle}>Total Complaints</p>
-                    <h3 style={styles.number}>{stats.total}</h3>
+                <div style={styles.cardBlue}>
+                    <p>Total Complaints</p>
+                    <h2>{stats.total}</h2>
                 </div>
 
-                <div style={{ ...styles.card, background: "#ffcc80" }}>
-                    <p style={styles.cardTitle}>Pending</p>
-                    <h3 style={styles.number}>{stats.pending}</h3>
+                <div style={styles.cardOrange}>
+                    <p>Pending</p>
+                    <h2>{stats.pending}</h2>
                 </div>
 
-                <div style={{ ...styles.card, background: "#90caf9" }}>
-                    <p style={styles.cardTitle}>Assigned</p>
-                    <h3 style={styles.number}>{stats.assigned}</h3>
+                <div style={styles.cardSky}>
+                    <p>Assigned</p>
+                    <h2>{stats.assigned}</h2>
                 </div>
 
-                <div style={{ ...styles.card, background: "#a5d6a7" }}>
-                    <p style={styles.cardTitle}>Resolved</p>
-                    <h3 style={styles.number}>{stats.resolved}</h3>
+                <div style={styles.cardGreen}>
+                    <p>Resolved</p>
+                    <h2>{stats.resolved}</h2>
                 </div>
 
-                <div style={{ ...styles.card, background: "#eeeeee" }}>
-                    <p style={styles.cardTitle}>Closed</p>
-                    <h3 style={styles.number}>{stats.closed}</h3>
+                <div style={styles.cardGrey}>
+                    <p>Closed</p>
+                    <h2>{stats.closed}</h2>
                 </div>
             </div>
         </div>
@@ -76,12 +73,8 @@ export default function AdminDashboard() {
 }
 
 const styles = {
-    page: {
-        padding: "30px",
-    },
-
     title: {
-        fontSize: "28px",
+        fontSize: "26px",
         fontWeight: "700",
         marginBottom: "25px",
     },
@@ -92,23 +85,41 @@ const styles = {
         gap: "20px",
     },
 
-    card: {
-        background: "#e3e7ff",
+    cardBase: {
         padding: "25px",
         borderRadius: "14px",
-        boxShadow: "0px 8px 20px rgba(0,0,0,0.1)",
+        color: "#fff",
+        boxShadow: "0 6px 22px rgba(0,0,0,0.15)",
     },
 
-    cardTitle: {
-        fontSize: "16px",
-        color: "#333",
-        fontWeight: "600",
+    cardBlue: {
+        background: "#3f51b5",
+        padding: "25px",
+        borderRadius: "14px",
+        color: "white",
     },
-
-    number: {
-        marginTop: "10px",
-        fontSize: "32px",
-        fontWeight: "700",
-        color: "#1a237e",
+    cardOrange: {
+        background: "#fb8c00",
+        padding: "25px",
+        borderRadius: "14px",
+        color: "white",
+    },
+    cardSky: {
+        background: "#29b6f6",
+        padding: "25px",
+        borderRadius: "14px",
+        color: "white",
+    },
+    cardGreen: {
+        background: "#43a047",
+        padding: "25px",
+        borderRadius: "14px",
+        color: "white",
+    },
+    cardGrey: {
+        background: "#757575",
+        padding: "25px",
+        borderRadius: "14px",
+        color: "white",
     },
 };

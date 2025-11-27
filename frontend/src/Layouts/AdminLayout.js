@@ -1,26 +1,27 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function AdminLayout({ children }) {
     return (
         <div style={styles.container}>
 
-            {/* SIDEBAR */}
+            {/* Sidebar */}
             <aside style={styles.sidebar}>
-                <h2 style={styles.heading}>Admin Panel</h2>
+                <h2 style={styles.logo}>Admin Panel</h2>
 
-                <a href="/admin/dashboard" style={styles.link}>Dashboard</a>
-                <a href="/admin/users" style={styles.link}>Users</a>
-                <a href="/admin/complaints" style={styles.link}>Complaints</a>
-                <a href="/admin/investigators" style={styles.link}>Investigators</a>
-                <a href="/admin/feedback" style={styles.link}>Feedback</a>
-                <a href="/logout" style={styles.logout}>Logout</a>
+                <nav style={styles.nav}>
+                    <Link to="/admin/dashboard" style={styles.link}>Dashboard</Link>
+                    <Link to="/admin/complaints" style={styles.link}>All Complaints</Link>
+                    <Link to="/admin/investigators" style={styles.link}>Investigators</Link>
+                    <Link to="/admin/add-investigator" style={styles.link}>Add Investigator</Link>
+                    <Link to="/logout" style={styles.logout}>Logout</Link>
+                </nav>
             </aside>
 
-            {/* PAGE CONTENT */}
+            {/* Page Content */}
             <main style={styles.content}>
                 {children}
             </main>
-
         </div>
     );
 }
@@ -28,41 +29,51 @@ export default function AdminLayout({ children }) {
 const styles = {
     container: {
         display: "flex",
+        minHeight: "100vh",
+        background: "#f5f7ff",
     },
 
     sidebar: {
         width: "250px",
-        background: "#1c2b5a",
-        minHeight: "100vh",
-        padding: "30px 20px",
+        background: "#1a237e",
+        padding: "25px 20px",
         color: "white",
+        display: "flex",
+        flexDirection: "column",
+    },
+
+    logo: {
+        fontSize: "22px",
+        fontWeight: "700",
+        marginBottom: "30px",
+        textAlign: "center",
+    },
+
+    nav: {
         display: "flex",
         flexDirection: "column",
         gap: "18px",
     },
 
-    heading: {
-        fontSize: "22px",
-        fontWeight: "700",
-        marginBottom: "30px",
-    },
-
     link: {
-        color: "#d7e3ff",
+        color: "white",
         textDecoration: "none",
-        fontSize: "15px",
+        fontSize: "16px",
+        padding: "10px 0",
+        borderRadius: "6px",
+        transition: "0.3s",
     },
 
     logout: {
-        marginTop: "auto",
-        color: "#ffb1b1",
+        marginTop: "50px",
+        color: "#ffab91",
         textDecoration: "none",
+        fontWeight: "600",
+        fontSize: "16px",
     },
 
     content: {
-        padding: "30px",
-        width: "100%",
-        background: "#f4f6ff",
-        minHeight: "100vh",
+        flex: 1,
+        padding: "30px 40px",
     },
 };

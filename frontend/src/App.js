@@ -20,6 +20,8 @@ import InvestigatorDashboard from "./Components/InvestigatorDashboard";
 import FileComplaint from "./Components/FileComplaint";
 import MyComplaints from "./Components/MyComplaints";
 import ComplaintDetails from "./Components/ComplaintDetails";
+import AdminComplaints from "./Components/AdminComplaints";
+import AdminComplaintDetails from "./Components/AdminComplaintDetails";
 
 
 function App() {
@@ -86,6 +88,26 @@ function App() {
             <ProtectedRoute role="Admin">
               <AdminLayout>
                 <AdminDashboard />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/complaints"
+          element={
+            <ProtectedRoute role="Admin">
+              <AdminLayout>
+                <AdminComplaints />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/complaints/:id"
+          element={
+            <ProtectedRoute role="Admin">
+              <AdminLayout>
+                <AdminComplaintDetails />
               </AdminLayout>
             </ProtectedRoute>
           }
