@@ -1,4 +1,6 @@
 import express from "express";
+import upload from "../middleware/upload.js";
+
 import {
     createComplaint,
     getAllComplaints,
@@ -11,12 +13,14 @@ import {
 
 const router = express.Router();
 
-router.post("/complaints", createComplaint);
-router.get("/complaints", getAllComplaints);
-router.get("/complaints/user/:email", getUserComplaints);
-router.get("/complaints/:id", getComplaintById);
-router.put("/complaints/:id/status", updateComplaintStatus);
-router.put("/complaints/:id/assign", assignComplaint);
-router.put("/complaints/:id/solution", addSolution);
+router.post("/", upload.single("file"), createComplaint);
+
+router.get("/all", getAllComplaints);
+router.get("/user/:email", getUserComplaints);
+router.get("/:id", getComplaintById);
+router.put("/:id/status", updateComplaintStatus);
+router.put("/:id/assign", assignComplaint);
+router.put("/:id/solution", addSolution);
+
 
 export default router;

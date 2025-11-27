@@ -6,7 +6,7 @@ const loginSchema = new mongoose.Schema(
         utype: {
             type: String,
             required: true,
-            enum: ["Admin", "User"],
+            enum: ["Admin", "User", "Investigator"],
             default: "User"
         },
         email: {

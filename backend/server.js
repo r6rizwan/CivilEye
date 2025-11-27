@@ -5,7 +5,8 @@ import dotenv from "dotenv";
 
 import registerRoutes from "./routes/registerRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
-// import complaintRoutes from "./routes/complaintRoutes.js";
+import passwordRoutes from "./routes/passwordRoutes.js";
+import complaintRoutes from "./routes/complaintRoutes.js";
 // import investigatorRoutes from "./routes/investigatorRoutes.js";
 // import profileRoutes from "./routes/profileRoutes.js";
 // import feedbackRoutes from "./routes/feedbackRoutes.js";
@@ -49,7 +50,9 @@ mongoose
 
 app.use("/api", registerRoutes);
 app.use("/api", loginRoutes);
-// app.use("/api", complaintRoutes);
+app.use("/api", passwordRoutes);
+app.use("/api/complaint", complaintRoutes);
+
 // app.use("/api", investigatorRoutes);
 // app.use("/api", profileRoutes);
 // app.use("/api", feedbackRoutes);

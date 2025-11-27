@@ -1,16 +1,44 @@
 import Complaint from "../models/Complaint.js";
 
-// Create complaint
+// CREATE COMPLAINT (with files)
 export const createComplaint = async (req, res) => {
     try {
-        const complaint = await Complaint.create(req.body);
-        res.status(201).json({ message: "Complaint filed successfully", complaint });
+        console.log("BODY:", req.body);
+        console.log("FILE:", req.file);
+
+        const {
+            complaintId,
+            complaintType,
+            description,
+            email
+        } = req.body;
+
+        // multer file path
+        let filePath = "";
+        if (req.file) {
+            filePath = req.file.path;
+        }
+
+        const complaint = await Complaint.create({
+            complaintId,
+            complaintType,
+            description,
+            email,
+            file: filePath,     // save file path
+            status: "Pending",
+        });
+
+        res.status(201).json({
+            message: "Complaint filed successfully",
+            complaint
+        });
+
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
-// Get all complaints (Admin)
+// ADMIN: get all complaints
 export const getAllComplaints = async (req, res) => {
     try {
         const complaints = await Complaint.find();
@@ -20,7 +48,7 @@ export const getAllComplaints = async (req, res) => {
     }
 };
 
-// Get complaints by user email
+// USER: get complaints by email
 export const getUserComplaints = async (req, res) => {
     try {
         const complaints = await Complaint.find({ email: req.params.email });
@@ -30,7 +58,6 @@ export const getUserComplaints = async (req, res) => {
     }
 };
 
-// Get single complaint by ID
 export const getComplaintById = async (req, res) => {
     try {
         const complaint = await Complaint.findById(req.params.id);
@@ -40,7 +67,7 @@ export const getComplaintById = async (req, res) => {
     }
 };
 
-// Update complaint status
+// UPDATE STATUS
 export const updateComplaintStatus = async (req, res) => {
     try {
         const updated = await Complaint.findByIdAndUpdate(
@@ -54,12 +81,12 @@ export const updateComplaintStatus = async (req, res) => {
     }
 };
 
-// Assign investigator
+// ASSIGN INVESTIGATOR
 export const assignComplaint = async (req, res) => {
     try {
         const updated = await Complaint.findByIdAndUpdate(
             req.params.id,
-            { assignedTo: req.body.assignedTo },
+            { assignedTo: req.body.assignedTo, status: "Assigned" },
             { new: true }
         );
         res.json(updated);
@@ -68,7 +95,7 @@ export const assignComplaint = async (req, res) => {
     }
 };
 
-// Add solution
+// ADD SOLUTION
 export const addSolution = async (req, res) => {
     try {
         const updated = await Complaint.findByIdAndUpdate(

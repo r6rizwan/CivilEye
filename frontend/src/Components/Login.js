@@ -19,11 +19,25 @@ export default function Login() {
                 password,
             });
 
-            setSuccess("Login Successful! Redirecting...", res);
+            // Save token + role
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("role", res.data.role);
+            localStorage.setItem("email", email);
+
+            setSuccess("Login Successful! Redirecting...");
+
+            // Redirect based on role
+            const role = res.data.role;
 
             setTimeout(() => {
-                window.location.href = "/dashboard";
-            }, 900);
+                if (role === "Admin") {
+                    window.location.href = "/admin/dashboard";
+                } else if (role === "Investigator") {
+                    window.location.href = "/investigator/dashboard";
+                } else {
+                    window.location.href = "/user/dashboard";
+                }
+            }, 800);
 
         } catch (err) {
             setError(err.response?.data?.error || "Invalid Credentials");

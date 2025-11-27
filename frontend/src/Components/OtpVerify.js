@@ -22,7 +22,7 @@ export default function OtpVerify() {
       setSuccess("OTP Verified Successfully! Redirecting...", res);
 
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.href = "/set-password?email=" + email;
       }, 1000);
 
     } catch (err) {
