@@ -10,7 +10,7 @@ import complaintRoutes from "./routes/complaintRoutes.js";
 import investigatorRoutes from "./routes/investigatorRoutes.js";
 
 // import investigatorRoutes from "./routes/investigatorRoutes.js";
-// import profileRoutes from "./routes/profileRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 // import feedbackRoutes from "./routes/feedbackRoutes.js";
 
 dotenv.config();
@@ -55,8 +55,7 @@ app.use("/api", loginRoutes);
 app.use("/api", passwordRoutes);
 app.use("/api/complaint", complaintRoutes);
 app.use("/api/investigators", investigatorRoutes);
-
-// app.use("/api", profileRoutes);
+app.use("/api/profile", profileRoutes);
 // app.use("/api", feedbackRoutes);
 
 app.get("/", (req, res) => res.send("API Working"));

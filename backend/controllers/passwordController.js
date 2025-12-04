@@ -1,5 +1,6 @@
 import Login from "../models/Login.js";
 import Register from "../models/Register.js";
+import Profile from "../models/Profile.js";
 
 export const createPassword = async (req, res) => {
     try {
@@ -11,13 +12,19 @@ export const createPassword = async (req, res) => {
             return res.status(400).json({ error: "User not verified!" });
         }
 
-        // create login entry
+        // Create login entry
         const login = await Login.create({
             email,
             password,
             utype: "User"
         });
 
+        // Create profile also (if not already created)
+        await Profile.create({
+            email,
+            fullName: user.fullName,
+            utype: "User"
+        });
 
         return res.json({
             message: "Password created successfully",
