@@ -1,63 +1,157 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
+import { logoutUser } from "../utils/logout";
 
 export default function InvestigatorLayout({ children }) {
     return (
         <div style={styles.container}>
 
+            {/* Fixed Sidebar */}
             <aside style={styles.sidebar}>
-                <h2 style={styles.heading}>Investigator</h2>
 
-                <a href="/investigator/dashboard" style={styles.link}>Dashboard</a>
-                <a href="/investigator/assigned" style={styles.link}>Assigned Cases</a>
-                <a href="/investigator/update-status" style={styles.link}>Update Status</a>
-                <a href="/investigator/history" style={styles.link}>History</a>
-                <a href="/logout" style={styles.logout}>Logout</a>
+                {/* WRAPPER THAT PREVENTS OVERFLOW */}
+                <div style={styles.sidebarInner}>
+
+                    <h2 style={styles.brand}>Investigator</h2>
+
+                    <nav style={styles.nav}>
+                        <NavLink
+                            to="/investigator/dashboard"
+                            style={({ isActive }) =>
+                                isActive ? { ...styles.link, ...styles.active } : styles.link
+                            }
+                        >
+                            Dashboard
+                        </NavLink>
+
+                        <NavLink
+                            to="/investigator/assigned"
+                            style={({ isActive }) =>
+                                isActive ? { ...styles.link, ...styles.active } : styles.link
+                            }
+                        >
+                            Assigned Cases
+                        </NavLink>
+
+                        <NavLink
+                            to="/investigator/update-status"
+                            style={({ isActive }) =>
+                                isActive ? { ...styles.link, ...styles.active } : styles.link
+                            }
+                        >
+                            Update Status
+                        </NavLink>
+
+                        <NavLink
+                            to="/investigator/history"
+                            style={({ isActive }) =>
+                                isActive ? { ...styles.link, ...styles.active } : styles.link
+                            }
+                        >
+                            History
+                        </NavLink>
+                    </nav>
+
+                    {/* Logout button kept inside wrapper */}
+                    <button onClick={logoutUser} style={styles.logout}>
+                        Logout
+                    </button>
+
+                </div>
             </aside>
 
-            <main style={styles.content}>
-                {children}
-            </main>
-
+            {/* Main Content */}
+            <main style={styles.content}>{children}</main>
         </div>
     );
 }
 
-const styles = {
-    container: { display: "flex" },
 
-    sidebar: {
-        width: "250px",
-        background: "#13254a",
-        minHeight: "100vh",
-        padding: "30px 20px",
-        color: "white",
+
+// STYLES
+const styles = {
+    container: {
         display: "flex",
-        flexDirection: "column",
-        gap: "18px",
+        minHeight: "100vh",
+        fontFamily: "Inter, sans-serif",
     },
 
-    heading: {
-        fontSize: "22px",
-        fontWeight: "700",
-        marginBottom: "30px",
+    // FIXED SIDEBAR
+    sidebar: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: 260,
+        height: "100vh",
+        background: "#0E1A33",
+        boxShadow: "4px 0 12px rgba(0,0,0,0.25)",
+        zIndex: 100,
+        overflow: "hidden",        // ensure sidebar itself doesn't overflow
+    },
+
+    // THIS WRAPPER FIXES YOUR ISSUE
+    sidebarInner: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        padding: "30px 20px",
+        overflow: "hidden",         // BLOCKS any child from leaking
+        boxSizing: "border-box",
+    },
+
+    brand: {
+        fontSize: 22,
+        fontWeight: 700,
+        marginBottom: 40,
+        textAlign: "center",
+        color: "white",
+        letterSpacing: 0.5,
+    },
+
+    nav: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+        flexGrow: 1,
     },
 
     link: {
-        color: "#cbe0ff",
+        padding: "12px 14px",
+        borderRadius: 10,
+        fontSize: 15,
         textDecoration: "none",
-        fontSize: "15px",
+        color: "#c8d5ff",
+        transition: "0.25s",
+        display: "block",
+    },
+
+    active: {
+        background: "#1C2F57",
+        color: "white",
+        fontWeight: 600,
+        boxShadow: "0 2px 10px rgba(0,0,0,0.25)",
     },
 
     logout: {
-        marginTop: "auto",
-        color: "#ffadad",
-        textDecoration: "none",
+        background: "#ff5f5f",
+        border: "none",
+        padding: "12px 16px",
+        borderRadius: 8,
+        width: "100%",
+        textAlign: "center",
+        color: "white",
+        fontWeight: 700,
+        cursor: "pointer",
+        fontSize: 15,
+        transition: "0.25s",
+        boxSizing: "border-box",
     },
 
     content: {
-        padding: "30px",
+        marginLeft: 260,
+        padding: "40px",
+        background: "#F5F7FF",
         width: "100%",
-        background: "#f7f9ff",
         minHeight: "100vh",
     },
 };

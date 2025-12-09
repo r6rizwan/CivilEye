@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
@@ -8,10 +9,11 @@ import loginRoutes from "./routes/loginRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
 import investigatorRoutes from "./routes/investigatorRoutes.js";
-
-// import investigatorRoutes from "./routes/investigatorRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
-// import feedbackRoutes from "./routes/feedbackRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
+
+import investigatorSetupRoute from "./routes/investigatorSetupRoute.js";
+
 
 dotenv.config();
 
@@ -37,6 +39,9 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve uploaded files from /uploads
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 
 
 if (!process.env.MONGO_URI) {
@@ -56,7 +61,10 @@ app.use("/api", passwordRoutes);
 app.use("/api/complaint", complaintRoutes);
 app.use("/api/investigators", investigatorRoutes);
 app.use("/api/profile", profileRoutes);
-// app.use("/api", feedbackRoutes);
+app.use("/api", feedbackRoutes);
+
+app.use("/api", investigatorSetupRoute);
+
 
 app.get("/", (req, res) => res.send("API Working"));
 

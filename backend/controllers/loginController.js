@@ -25,12 +25,15 @@ export const createLogin = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(email, password);
 
         const user = await Login.findOne({ email });
+        console.log("User found:", user);
 
         if (!user) return res.status(404).json({ error: "User not found" });
 
         const isMatch = await user.comparePassword(password);
+        console.log("Password match:", isMatch);
 
         if (!isMatch) return res.status(400).json({ error: "Invalid password" });
 

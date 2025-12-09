@@ -1,79 +1,130 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { logoutUser } from "../utils/logout";
 
 export default function AdminLayout({ children }) {
     return (
         <div style={styles.container}>
 
-            {/* Sidebar */}
+            {/* SIDEBAR */}
             <aside style={styles.sidebar}>
-                <h2 style={styles.logo}>Admin Panel</h2>
+                <h2 style={styles.brand}>Admin Panel</h2>
 
                 <nav style={styles.nav}>
-                    <Link to="/admin/dashboard" style={styles.link}>Dashboard</Link>
-                    <Link to="/admin/complaints" style={styles.link}>All Complaints</Link>
-                    <Link to="/admin/investigators" style={styles.link}>Investigators</Link>
-                    <Link to="/admin/add-investigator" style={styles.link}>Add Investigator</Link>
-                    <Link to="/logout" style={styles.logout}>Logout</Link>
+
+                    <NavLink
+                        to="/admin/dashboard"
+                        style={({ isActive }) =>
+                            isActive ? { ...styles.link, ...styles.active } : styles.link
+                        }
+                    >
+                        Dashboard
+                    </NavLink>
+
+                    <NavLink
+                        to="/admin/complaints"
+                        style={({ isActive }) =>
+                            isActive ? { ...styles.link, ...styles.active } : styles.link
+                        }
+                    >
+                        All Complaints
+                    </NavLink>
+
+                    <NavLink
+                        to="/admin/investigators"
+                        style={({ isActive }) =>
+                            isActive ? { ...styles.link, ...styles.active } : styles.link
+                        }
+                    >
+                        Investigators
+                    </NavLink>
+
+                    <NavLink
+                        to="/admin/add-investigator"
+                        style={({ isActive }) =>
+                            isActive ? { ...styles.link, ...styles.active } : styles.link
+                        }
+                    >
+                        Add Investigator
+                    </NavLink>
                 </nav>
+
+                <button onClick={logoutUser} style={styles.logout}>
+                    Logout
+                </button>
             </aside>
 
-            {/* Page Content */}
-            <main style={styles.content}>
-                {children}
-            </main>
+            {/* CONTENT */}
+            <main style={styles.content}>{children}</main>
         </div>
     );
 }
 
+//
+// Styles
+//
 const styles = {
-    container: {
-        display: "flex",
-        minHeight: "100vh",
-        background: "#f5f7ff",
-    },
+    container: { display: "flex", minHeight: "100vh", fontFamily: "Inter" },
 
     sidebar: {
-        width: "250px",
-        background: "#1a237e",
-        padding: "25px 20px",
-        color: "white",
+        width: 260,
+        background: "#0E1A33",
+        padding: "30px 20px",
+        color: "#c8d5ff",
         display: "flex",
         flexDirection: "column",
+        boxShadow: "4px 0 12px rgba(0,0,0,0.25)",
     },
 
-    logo: {
-        fontSize: "22px",
+    brand: {
+        fontSize: 22,
         fontWeight: "700",
-        marginBottom: "30px",
+        marginBottom: 40,
         textAlign: "center",
+        color: "white",
+        letterSpacing: 0.5,
     },
 
     nav: {
         display: "flex",
         flexDirection: "column",
-        gap: "18px",
+        gap: 14,
+        flexGrow: 1,
     },
 
     link: {
-        color: "white",
+        padding: "12px 14px",
+        borderRadius: 10,
+        fontSize: 15,
         textDecoration: "none",
-        fontSize: "16px",
-        padding: "10px 0",
-        borderRadius: "6px",
-        transition: "0.3s",
+        color: "#c8d5ff",
+        transition: "0.25s",
+    },
+
+    active: {
+        background: "#1C2F57",
+        color: "white",
+        fontWeight: 600,
+        boxShadow: "0 2px 10px rgba(0,0,0,0.25)",
     },
 
     logout: {
-        marginTop: "50px",
-        color: "#ffab91",
-        textDecoration: "none",
-        fontWeight: "600",
-        fontSize: "16px",
+        marginTop: "auto",
+        background: "#ff5f5f",
+        border: "none",
+        padding: "12px",
+        borderRadius: 10,
+        color: "white",
+        fontWeight: 700,
+        cursor: "pointer",
+        fontSize: 15,
+        boxShadow: "0 2px 10px rgba(0,0,0,0.25)",
+        transition: "0.25s",
     },
 
     content: {
         flex: 1,
-        padding: "30px 40px",
+        padding: "40px",
+        background: "#F5F7FF",
     },
 };

@@ -7,8 +7,13 @@ import {
 
 const router = express.Router();
 
-router.post("/", createProfile);                 // Create profile
-router.get("/:email", getProfile);               // Get profile
-router.put("/:email", updateProfile);            // Update profile
+// Create profile
+router.post("/", createProfile);
+
+// Get profile
+router.get("/:email", getProfile);
+
+// Update profile
+router.put("/:email", updateProfile);
 
 export default router;

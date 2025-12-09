@@ -22,6 +22,7 @@ import MyComplaints from "./Components/MyComplaints";
 import ComplaintDetails from "./Components/ComplaintDetails";
 import AdminComplaints from "./Components/AdminComplaints";
 import AdminComplaintDetails from "./Components/AdminComplaintDetails";
+import ComplaintTracking from "./Components/ComplaintTracking";
 
 
 function App() {
@@ -48,7 +49,16 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Under user routes */}
+        <Route
+          path="/complaint-tracking"
+          element={
+            <ProtectedRoute role="User">
+              <UserLayout>
+                <ComplaintTracking />
+              </UserLayout>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/file-complaint"
           element={

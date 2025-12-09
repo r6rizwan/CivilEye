@@ -14,9 +14,11 @@ export const createComplaint = async (req, res) => {
         } = req.body;
 
         // multer file path
-        let filePath = "";
+        // store only the saved filename (sanitized by multer middleware)
+        let fileName = "";
         if (req.file) {
-            filePath = req.file.path;
+            // multer's diskStorage filename returns the sanitized filename
+            fileName = req.file.filename || req.file.path || "";
         }
 
         const complaint = await Complaint.create({
@@ -24,7 +26,7 @@ export const createComplaint = async (req, res) => {
             complaintType,
             description,
             email,
-            file: filePath,     // save file path
+            file: fileName,
             status: "Pending",
         });
 
@@ -106,5 +108,49 @@ export const addSolution = async (req, res) => {
         res.json(updated);
     } catch (error) {
         res.status(400).json({ error: error.message });
+    }
+};
+
+// TRACK COMPLAINT
+export const trackComplaint = async (req, res) => {
+    try {
+        const id  = req.params.id;
+        const userEmail = req.params.email;
+        // console.log("Tracking complaint:", id, "for email:", userEmail);
+
+        if (!userEmail) {
+            return res.status(400).json({ error: "Email is required" });
+        }
+
+        // Search complaint by complaintId or _id
+        const complaint = await Complaint.findOne({
+            $or: [{ complaintId: id }]
+        });
+
+        if (!complaint) {
+            return res.status(404).json({ error: "Complaint not found" });
+        }
+
+        // SECURITY CHECK → Only owner can view
+        if (complaint.email !== userEmail) {
+            return res.status(403).json({ error: "No complaint matching the given ID" });
+        }
+
+        res.json(complaint);
+    } catch (error) {
+        res.status(500).json({ error: "Server error" });
+    }
+};
+
+// Get complaints assigned to an investigator
+export const getComplaintsAssignedToInvestigator = async (req, res) => {
+    try {
+        const { email } = req.params;
+
+        const complaints = await Complaint.find({ assignedTo: email });
+
+        res.json(complaints);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 };

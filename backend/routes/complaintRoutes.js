@@ -8,7 +8,9 @@ import {
     getComplaintById,
     updateComplaintStatus,
     assignComplaint,
-    addSolution
+    addSolution,
+    trackComplaint,
+    getComplaintsAssignedToInvestigator
 } from "../controllers/complaintController.js";
 
 const router = express.Router();
@@ -21,6 +23,12 @@ router.get("/:id", getComplaintById);
 router.put("/:id/status", updateComplaintStatus);
 router.put("/:id/assign", assignComplaint);
 router.put("/:id/solution", addSolution);
+
+// complaint tracking
+router.get("/complaint-tracking/:id/:email", trackComplaint);
+
+// Get complaints assigned to an investigator
+router.get("/assigned/:email", getComplaintsAssignedToInvestigator);
 
 
 export default router;

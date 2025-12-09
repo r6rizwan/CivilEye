@@ -127,7 +127,7 @@ export default function AdminComplaintDetails() {
                         <div style={styles.infoGroup}>
                             <label>Attachment</label>
                             <a
-                                href={`http://localhost:7000/uploads/${complaint.file}`}
+                                href={encodeURI(`http://localhost:7000/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`)}
                                 target="_blank"
                                 rel="noreferrer"
                                 style={styles.fileLink}

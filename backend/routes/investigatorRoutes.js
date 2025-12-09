@@ -4,7 +4,8 @@ import {
     getInvestigators,
     getInvestigatorById,
     updateInvestigator,
-    deleteInvestigator
+    deleteInvestigator,
+    getInvestigatorByEmail
 } from "../controllers/investigatorController.js";
 
 const router = express.Router();
@@ -23,5 +24,7 @@ router.put("/:id", updateInvestigator);
 
 // DELETE investigator
 router.delete("/:id", deleteInvestigator);
+
+router.get("/by-email/:email", getInvestigatorByEmail);
 
 export default router;

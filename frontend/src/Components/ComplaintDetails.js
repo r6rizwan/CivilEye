@@ -40,6 +40,14 @@ export default function ComplaintDetails() {
         Open: "#0277bd",
     };
 
+    // Build a safe public URL for the saved filename (stored as filename by server)
+    const fileUrl = complaint && complaint.file
+        ? `http://localhost:7000/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`
+        : null;
+
+    // Encode URL to handle spaces and other unsafe characters
+    const fileUrlEncoded = fileUrl ? encodeURI(fileUrl) : null;
+
     return (
         <div style={styles.page}>
             <div style={styles.card}>
@@ -81,7 +89,7 @@ export default function ComplaintDetails() {
                     <span style={styles.label}>Attachment:</span>
                     {complaint.file ? (
                         <a
-                            href={`http://localhost:7000/uploads/${complaint.file}`}
+                            href={fileUrlEncoded}
                             target="_blank"
                             rel="noreferrer"
                             style={styles.fileLink}
