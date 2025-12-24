@@ -12,7 +12,8 @@ import investigatorRoutes from "./routes/investigatorRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import caseFileRoutes from "./routes/caseFileRoutes.js";
-
+import adminRoutes from "./routes/adminRoutes.js";
+import caseActivityRoutes from "./routes/caseActivityRoutes.js";
 import investigatorSetupRoute from "./routes/investigatorSetupRoute.js";
 
 
@@ -64,7 +65,8 @@ app.use("/api/investigators", investigatorRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api", feedbackRoutes);
 app.use("/api/case-files", caseFileRoutes);
-
+app.use("/api", adminRoutes);
+app.use("/api/case-activity", caseActivityRoutes);
 app.use("/api", investigatorSetupRoute);
 
 

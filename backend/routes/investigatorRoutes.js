@@ -5,7 +5,9 @@ import {
     getInvestigatorById,
     updateInvestigator,
     deleteInvestigator,
-    getInvestigatorByEmail
+    getInvestigatorByEmail,
+    sendOtp,
+    verifyOtp,
 } from "../controllers/investigatorController.js";
 
 const router = express.Router();
@@ -16,6 +18,9 @@ router.post("/", createInvestigator);
 // GET all investigators
 router.get("/", getInvestigators);
 
+// GET by email (KEEP THIS ABOVE :id)
+router.get("/by-email/:email", getInvestigatorByEmail);
+
 // GET a single investigator
 router.get("/:id", getInvestigatorById);
 
@@ -25,6 +30,8 @@ router.put("/:id", updateInvestigator);
 // DELETE investigator
 router.delete("/:id", deleteInvestigator);
 
-router.get("/by-email/:email", getInvestigatorByEmail);
+// OTP AUTH
+router.post("/auth/send-otp", sendOtp);
+router.post("/auth/verify-otp", verifyOtp);
 
 export default router;

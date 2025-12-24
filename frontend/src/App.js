@@ -28,6 +28,8 @@ import InvestigatorUpdateStatus from "./Components/InvestigatorUpdateStatus";
 import InvestigatorCaseFiles from "./Components/InvestigatorCaseFiles";
 import AdminCaseFiles from "./Components/AdminCaseFiles";
 import UserProfile from "./Components/UserProfile";
+import AdminInvestigators from "./Components/AdminInvestigators";
+import AdminAddInvestigator from "./Components/AdminAddInvestigator";
 
 
 function App() {
@@ -123,6 +125,26 @@ function App() {
             <ProtectedRoute role="Admin">
               <AdminLayout>
                 <AdminComplaints />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/investigators"
+          element={
+            <ProtectedRoute role="Admin">
+              <AdminLayout>
+                <AdminInvestigators />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/add-investigator"
+          element={
+            <ProtectedRoute role="Admin">
+              <AdminLayout>
+                <AdminAddInvestigator />
               </AdminLayout>
             </ProtectedRoute>
           }

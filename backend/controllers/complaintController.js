@@ -1,10 +1,28 @@
 import Complaint from "../models/Complaint.js";
 import CaseActivity from "../models/CaseActivity.js";
+import Counter from "../models/Counter.js";
 
-// CREATE COMPLAINT (USER)
+/* ----------------------------------------------------
+   CREATE COMPLAINT (USER)
+---------------------------------------------------- */
 export const createComplaint = async (req, res) => {
     try {
-        const { complaintId, complaintType, description, email } = req.body;
+        const { complaintType, description, email } = req.body;
+
+        const year = new Date().getFullYear();
+
+        // 🔐 Atomic counter per year
+        const counter = await Counter.findOneAndUpdate(
+            { year },
+            { $inc: { seq: 1 } },
+            { new: true, upsert: true }
+        );
+
+        // 🔢 Zero-padded sequence
+        const paddedSeq = String(counter.seq).padStart(2, "0");
+
+        // ✅ FINAL FORMAT
+        const complaintId = `CMP-${paddedSeq}/${year}`;
 
         let fileName = "";
         if (req.file) {
@@ -26,16 +44,21 @@ export const createComplaint = async (req, res) => {
             action: "Complaint Filed",
             performedBy: email,
             role: "User",
+            meta: {
+                referenceId: complaintId,
+            },
         });
 
         res.status(201).json({
             message: "Complaint filed successfully",
-            complaint
+            complaint,
         });
+
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
+
 
 /* ----------------------------------------------------
    ADMIN

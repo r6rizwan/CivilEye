@@ -11,11 +11,6 @@ export default function FileComplaint() {
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
-    // Auto-generate complaint ID
-    const generateComplaintId = () => {
-        return "CMP-" + Math.floor(100000 + Math.random() * 900000);
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -37,7 +32,6 @@ export default function FileComplaint() {
         setError("");
         setMessage("");
 
-        const complaintId = generateComplaintId();
         const email = localStorage.getItem("email"); // email saved at login
 
         if (!email) {
@@ -47,7 +41,6 @@ export default function FileComplaint() {
 
         try {
             const formData = new FormData();
-            formData.append("complaintId", complaintId);
             formData.append("complaintType", form.complaintType);
             formData.append("description", form.description);
             formData.append("email", email);

@@ -78,7 +78,7 @@ export default function AdminComplaints() {
                 <table style={styles.table}>
                     <thead style={styles.thead}>
                         <tr>
-                            <th>Complaint ID</th>
+                            <th style={{ padding: "5px" }}>Complaint ID</th>
                             <th>Type</th>
                             <th>Email</th>
                             <th>Status</th>
@@ -97,7 +97,7 @@ export default function AdminComplaints() {
                                     background: index % 2 === 0 ? "#FAFBFF" : "#FFFFFF",
                                 }}
                             >
-                                <td>{c.complaintId}</td>
+                                <td style={{ padding: "5px" }}>{c.complaintId}</td>
                                 <td>{c.complaintType}</td>
                                 <td>{c.email}</td>
 
@@ -118,7 +118,7 @@ export default function AdminComplaints() {
                                     {new Date(c.createdAt).toLocaleDateString("en-IN")}
                                 </td>
 
-                                <td style={{ textAlign: "center" }}>
+                                <td style={{ textAlign: "center", padding: "5px" }}>
                                     <button
                                         style={styles.viewBtn}
                                         onClick={() =>
@@ -202,6 +202,7 @@ const styles = {
     },
 
     card: {
+        // padding: "10px",
         background: "#FFFFFF",
         borderRadius: "16px",
         boxShadow: "0 8px 28px rgba(0,0,0,0.08)",
@@ -215,12 +216,14 @@ const styles = {
     },
 
     thead: {
+        textAlign: "left",
         background: "#F6F7FC",
         borderBottom: "2px solid #E2E5EE",
     },
 
     row: {
         transition: "0.2s",
+        padding: "12px 20px 0px 20px",
     },
 
     badge: {

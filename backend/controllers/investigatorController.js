@@ -1,12 +1,127 @@
 import Investigator from "../models/Investigator.js";
+import jwt from "jsonwebtoken";
+
+const generateInvestigatorId = async () => {
+    const lastInvestigator = await Investigator
+        .findOne({})
+        .sort({ dateJoined: -1 });
+
+    if (!lastInvestigator || !lastInvestigator.investigatorId) {
+        return "INV-01";
+    }
+
+    const lastNumber = parseInt(
+        lastInvestigator.investigatorId.split("-")[1]
+    );
+
+    const nextNumber = String(lastNumber + 1).padStart(2, "0");
+    return `INV-${nextNumber}`;
+};
 
 // Create Investigator
 export const createInvestigator = async (req, res) => {
     try {
-        const investigator = await Investigator.create(req.body);
-        res.status(201).json(investigator);
+        const { name, email, phone, address } = req.body;
+
+        // check duplicate
+        const existing = await Investigator.findOne({
+            $or: [{ email }, { phone }]
+        });
+
+        if (existing) {
+            return res.status(400).json({
+                error: "Investigator already exists"
+            });
+        }
+
+        const investigatorId = await generateInvestigatorId();
+
+        const investigator = await Investigator.create({
+            investigatorId,
+            name,
+            email,
+            phone,
+            address,
+        });
+
+        res.status(201).json({
+            message: "Investigator created successfully",
+            investigator
+        });
+
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Send OTP to investigator
+export const sendOtp = async (req, res) => {
+    try {
+        const { phone } = req.body;
+
+        const investigator = await Investigator.findOne({ phone });
+
+        if (!investigator) {
+            return res.status(404).json({
+                error: "Phone number not registered"
+            });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        investigator.otp = otp;
+        investigator.otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+
+        await investigator.save();
+
+        // ⚠️ DEV MODE: show OTP
+        res.json({
+            message: "OTP generated",
+            otp, // REMOVE later when SMS is added
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Verify OTP
+export const verifyOtp = async (req, res) => {
+    try {
+        const { phone, otp } = req.body;
+
+        const investigator = await Investigator.findOne({ phone });
+
+        if (!investigator || investigator.otp !== otp) {
+            return res.status(401).json({ error: "Invalid OTP" });
+        }
+
+        if (investigator.otpExpiresAt < new Date()) {
+            return res.status(401).json({ error: "OTP expired" });
+        }
+
+        // Clear OTP
+        investigator.otp = null;
+        investigator.otpExpiresAt = null;
+        await investigator.save();
+
+        const token = jwt.sign(
+            {
+                id: investigator._id,
+                role: "Investigator",
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        );
+
+        res.json({
+            message: "Login successful",
+            token,
+            investigator
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };
 
