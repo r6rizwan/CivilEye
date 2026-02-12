@@ -16,28 +16,37 @@ import caseFileRoutes from "./routes/caseFileRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import caseActivityRoutes from "./routes/caseActivityRoutes.js";
 import investigatorSetupRoute from "./routes/investigatorSetupRoute.js";
+import superAdminRoutes from "./routes/superAdminRoutes.js";
 
 
 dotenv.config();
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
+const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
-
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow non-browser requests or same-origin
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("CORS: origin not allowed"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+    ],
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -59,6 +68,11 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
+if (!process.env.SUPER_ADMIN_EMAIL || !process.env.SUPER_ADMIN_PASSWORD || !process.env.SUPER_ADMIN_JWT_SECRET) {
+  console.error("❌ SUPER_ADMIN_EMAIL / SUPER_ADMIN_PASSWORD / SUPER_ADMIN_JWT_SECRET missing in .env");
+  process.exit(1);
+}
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✔ MongoDB Connected"))
@@ -76,6 +90,7 @@ app.use("/api/case-files", caseFileRoutes);
 app.use("/api", adminRoutes);
 app.use("/api/case-activity", caseActivityRoutes);
 app.use("/api", investigatorSetupRoute);
+app.use("/api", superAdminRoutes);
 
 
 app.get("/", (req, res) => res.send("API Working"));

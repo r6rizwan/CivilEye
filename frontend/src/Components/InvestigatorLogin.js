@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function InvestigatorLogin() {
     const navigate = useNavigate();
 
-    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [otp, setOtp] = useState("");
-    const [step, setStep] = useState(1);
+    const [otpSent, setOtpSent] = useState(false);
+    const [mode, setMode] = useState("email"); // email | login | setup
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [showLoginMenu, setShowLoginMenu] = useState(false);
 
     /* Close dropdown on outside click */
@@ -19,22 +23,58 @@ export default function InvestigatorLogin() {
         return () => window.removeEventListener("click", closeMenu);
     }, []);
 
-    const sendOtp = async () => {
-        if (!phone) return setError("Enter registered mobile number");
+    const handleCheckEmail = async () => {
+        if (!email) return setError("Email is required");
 
         setLoading(true);
         setError("");
+        setSuccess("");
 
         try {
-            const res = await axios.post(
-                "http://localhost:7000/api/investigators/send-otp",
-                { phone }
-            );
+            const res = await api.post("/api/investigators/password-status", { email });
+            if (res.data.hasPassword) {
+                setMode("login");
+            } else {
+                setMode("setup");
+            }
+        } catch (err) {
+            setError(err.response?.data?.error || "Unable to check investigator profile");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-            // DEV MODE ONLY
-            alert(`OTP: ${res.data.otp}`);
+    const handleLogin = async () => {
+        if (!email || !password) return setError("Email and password are required");
+        setLoading(true);
+        setError("");
+        setSuccess("");
+        try {
+            const res = await api.post("/api/login", { email, password });
+            if (res.data.role !== "Investigator") {
+                return setError("Not authorized as Investigator");
+            }
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("email", email);
+            localStorage.setItem("role", "Investigator");
 
-            setStep(2);
+            navigate("/investigator/dashboard");
+        } catch (err) {
+            setError(err.response?.data?.error || "Invalid credentials");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSendOtp = async () => {
+        if (!email) return setError("Email is required");
+        setLoading(true);
+        setError("");
+        setSuccess("");
+        try {
+            await api.post("/api/forgotpassword", { email });
+            setOtpSent(true);
+            setSuccess("OTP sent to your email.");
         } catch (err) {
             setError(err.response?.data?.error || "Failed to send OTP");
         } finally {
@@ -42,26 +82,35 @@ export default function InvestigatorLogin() {
         }
     };
 
-    const verifyOtp = async () => {
-        if (!otp) return setError("Enter OTP");
+    const handleCreatePassword = async () => {
+        if (!otpSent) return setError("Send OTP first");
+        if (!otp || !password || !confirmPassword) {
+            return setError("OTP, password, and confirm password are required");
+        }
+        if (password !== confirmPassword) {
+            return setError("Passwords do not match");
+        }
+        if (password.length < 6) {
+            return setError("Password must be at least 6 characters");
+        }
 
         setLoading(true);
         setError("");
-
+        setSuccess("");
         try {
-            const res = await axios.post(
-                "http://localhost:7000/api/investigators/verify-otp",
-                { phone, otp }
-            );
-
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("email", res.data.investigator.email);
-            localStorage.setItem("name", res.data.investigator.name);
-            localStorage.setItem("role", "Investigator");
-
-            navigate("/investigator/dashboard");
+            const verify = await api.post("/api/verifyotp", { email, otp });
+            await api.post("/api/resetpassword", {
+                resetToken: verify.data.resetToken,
+                newPassword: password,
+            });
+            setSuccess("Password created successfully. You can now login.");
+            setMode("login");
+            setPassword("");
+            setConfirmPassword("");
+            setOtp("");
+            setOtpSent(false);
         } catch (err) {
-            setError(err.response?.data?.error || "Invalid OTP");
+            setError(err.response?.data?.error || "Failed to create password");
         } finally {
             setLoading(false);
         }
@@ -123,72 +172,137 @@ export default function InvestigatorLogin() {
             <div style={styles.container}>
                 <div style={styles.sideCard}>
                     <p style={styles.eyebrow}>Authorized Personnel</p>
-                    <h2 style={styles.sideTitle}>Secure OTP authentication.</h2>
+                    <h2 style={styles.sideTitle}>Secure investigator access.</h2>
                     <p style={styles.sideText}>
-                        Receive a one-time code to access your assigned cases and
-                        investigation tools.
+                        Access your assigned cases and investigation tools with your
+                        registered email and password.
                     </p>
                     <div style={styles.sideNote}>
-                        Keep your device handy for verification.
+                        First-time investigators can set their password from this screen.
                     </div>
                 </div>
 
                 <div style={styles.card}>
                     <h2 style={styles.title}>Investigator Login</h2>
                     <p style={styles.subtitle}>
-                        Secure OTP-based access for authorized investigators
+                        Secure access for authorized investigators
                     </p>
 
                     {error && <div style={styles.error}>{error}</div>}
-
-                    {step === 1 && (
+                    {success && <div style={styles.success}>{success}</div>}
+                    {mode === "email" && (
                         <>
-                            <label style={styles.label}>Registered Mobile Number</label>
+                            <label style={styles.label}>Email</label>
                             <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder="Enter registered number"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter registered email"
                                 style={styles.input}
                             />
-
                             <button
-                                onClick={sendOtp}
+                                onClick={handleCheckEmail}
                                 disabled={loading}
                                 style={styles.primaryBtn}
                             >
-                                {loading ? "Sending…" : "Send OTP"}
+                                {loading ? "Checking..." : "Continue"}
                             </button>
                         </>
                     )}
 
-                    {step === 2 && (
+                    {mode === "login" && (
                         <>
-                            <label style={styles.label}>Enter OTP</label>
+                            <label style={styles.label}>Email</label>
+                            <input type="email" value={email} disabled style={styles.input} />
+
+                            <label style={styles.label}>Password</label>
                             <input
-                                type="text"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                                placeholder="6-digit OTP"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter password"
                                 style={styles.input}
                             />
+                            <button onClick={handleLogin} disabled={loading} style={styles.primaryBtn}>
+                                {loading ? "Signing in..." : "Login"}
+                            </button>
+                            <p style={styles.helper}>
+                                Wrong email?{" "}
+                                <span style={styles.link} onClick={() => setMode("email")}>
+                                    Change email
+                                </span>
+                            </p>
+                        </>
+                    )}
 
-                            <div style={styles.actions}>
-                                <button
-                                    onClick={() => setStep(1)}
-                                    style={styles.secondaryBtn}
-                                >
-                                    Change Number
-                                </button>
+                    {mode === "setup" && (
+                        <>
+                            <label style={styles.label}>Email</label>
+                            <input type="email" value={email} disabled style={styles.input} />
 
-                                <button
-                                    onClick={verifyOtp}
-                                    disabled={loading}
-                                    style={styles.primaryBtn}
-                                >
-                                    {loading ? "Verifying…" : "Verify & Login"}
-                                </button>
-                            </div>
+                            {!otpSent && (
+                                <>
+                                    <p style={styles.helper}>
+                                        No password found for this investigator. Send OTP to set a new password.
+                                    </p>
+                                    <button onClick={handleSendOtp} disabled={loading} style={styles.secondaryBtn}>
+                                        {loading ? "Sending..." : "Send OTP"}
+                                    </button>
+                                </>
+                            )}
+
+                            {otpSent && (
+                                <>
+                                    <label style={styles.label}>OTP</label>
+                                    <input
+                                        type="text"
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        placeholder="Enter OTP"
+                                        style={styles.input}
+                                    />
+
+                                    <label style={styles.label}>Create Password</label>
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="New password"
+                                        style={styles.input}
+                                    />
+
+                                    <label style={styles.label}>Confirm Password</label>
+                                    <input
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="Confirm password"
+                                        style={styles.input}
+                                    />
+
+                                    <button
+                                        onClick={handleCreatePassword}
+                                        disabled={loading}
+                                        style={styles.primaryBtn}
+                                    >
+                                        {loading ? "Processing..." : "Verify OTP & Create Password"}
+                                    </button>
+                                    <button
+                                        onClick={handleSendOtp}
+                                        disabled={loading}
+                                        style={styles.secondaryBtn}
+                                    >
+                                        {loading ? "Sending..." : "Resend OTP"}
+                                    </button>
+                                </>
+                            )}
+
+                            <p style={styles.helper}>
+                                Wrong email?{" "}
+                                <span style={styles.link} onClick={() => setMode("email")}>
+                                    Change email
+                                </span>
+                            </p>
                         </>
                     )}
                 </div>
@@ -339,6 +453,13 @@ const styles = {
     },
     title: { fontSize: 24, fontWeight: 700, marginBottom: 6 },
     subtitle: { color: "var(--ink-600)", marginBottom: 20 },
+    helper: { color: "var(--ink-600)", marginBottom: 10, fontSize: 13 },
+    link: {
+        color: "var(--mint-600)",
+        fontWeight: 600,
+        cursor: "pointer",
+        textDecoration: "underline",
+    },
 
     label: {
         fontWeight: 600,
@@ -350,6 +471,14 @@ const styles = {
     error: {
         background: "#FDECEA",
         color: "#C62828",
+        padding: 12,
+        borderRadius: 10,
+        marginBottom: 14,
+        fontWeight: 600,
+    },
+    success: {
+        background: "rgba(34,197,94,0.15)",
+        color: "#166534",
         padding: 12,
         borderRadius: 10,
         marginBottom: 14,

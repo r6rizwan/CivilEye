@@ -4,16 +4,17 @@ import {
     getProfile,
     updateProfile
 } from "../controllers/profileController.js";
+import { authenticateToken, requireRole, requireSelfEmailOrRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Create profile
-router.post("/", createProfile);
+router.post("/", authenticateToken, requireRole(["User"]), createProfile);
 
 // Get profile
-router.get("/:email", getProfile);
+router.get("/:email", authenticateToken, requireSelfEmailOrRole(["Admin"]), getProfile);
 
 // Update profile
-router.put("/:email", updateProfile);
+router.put("/:email", authenticateToken, requireSelfEmailOrRole(["Admin"]), updateProfile);
 
 export default router;

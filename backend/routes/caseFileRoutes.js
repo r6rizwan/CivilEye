@@ -4,12 +4,15 @@ import {
     createOrUpdateCaseFile,
     getCaseFilesByComplaint
 } from "../controllers/caseFileController.js";
+import { authenticateToken, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Investigator uploads files + notes
 router.post(
     "/:complaintId",
+    authenticateToken,
+    requireRole(["Investigator"]),
     upload.array("files", 5),
     createOrUpdateCaseFile
 );
@@ -17,6 +20,8 @@ router.post(
 // Admin & Investigator view case files
 router.get(
     "/:complaintId",
+    authenticateToken,
+    requireRole(["Admin", "Investigator"]),
     getCaseFilesByComplaint
 );
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -26,7 +26,7 @@ export default function Login() {
         setSuccess("");
 
         try {
-            const res = await axios.post("http://localhost:7000/api/login", {
+            const res = await api.post("/api/login", {
                 email,
                 password,
             });
@@ -34,6 +34,9 @@ export default function Login() {
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("role", res.data.role);
             localStorage.setItem("email", email);
+            if (res.data.role === "Admin") {
+                localStorage.setItem("adminToken", res.data.token);
+            }
 
             setSuccess("Login Successful! Redirecting...");
 
@@ -148,6 +151,12 @@ export default function Login() {
                             Login
                         </button>
                     </form>
+
+                    <p style={styles.footer}>
+                        <span style={styles.link} onClick={() => navigate("/forgot-password")}>
+                            Forgot password?
+                        </span>
+                    </p>
 
                     <p style={styles.footer}>
                         Don’t have an account?{" "}

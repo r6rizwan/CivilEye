@@ -1,5 +1,5 @@
 // import React, { useEffect, useState } from "react";
-// import axios from "axios";
+// import api from "../utils/api";
 // import { useNavigate } from "react-router-dom";
 
 // const renderStat = (label, value, color) => (
@@ -31,9 +31,9 @@
 //     const loadDashboard = async () => {
 //         try {
 //             const results = await Promise.allSettled([
-//                 axios.get("http://localhost:7000/api/complaint/all"),
-//                 axios.get("http://localhost:7000/api/investigators"),
-//                 axios.get("http://localhost:7000/api/case-activity/recent"),
+//                 api.get("/api/complaint/all"),
+//                 api.get("/api/investigators"),
+//                 api.get("/api/case-activity/recent"),
 //             ]);
 
 //             const [complaintsRes, investigatorsRes, activityRes] = results;
@@ -111,7 +111,7 @@
 //         if (!modalComplaint) return;
 //         setClosingId(modalComplaint._id);
 //         try {
-//             await axios.put(`http://localhost:7000/api/complaint/${modalComplaint._id}/close`);
+//             await api.put(`/api/complaint/${modalComplaint._id}/close`);
 //             await loadDashboard();
 //             setCloseModalVisible(false);
 //             setModalComplaint(null);
@@ -126,7 +126,7 @@
 //         if (!modalComplaint || !selectedInvestigator) return;
 //         setAssigningId(modalComplaint._id);
 //         try {
-//             await axios.put(`http://localhost:7000/api/complaint/${modalComplaint._id}/assign`, { assignedTo: selectedInvestigator });
+//             await api.put(`/api/complaint/${modalComplaint._id}/assign`, { assignedTo: selectedInvestigator });
 //             await loadDashboard();
 //             setAssignModalVisible(false);
 //             setModalComplaint(null);
@@ -459,7 +459,7 @@
 
 
 // import React, { useEffect, useState } from "react";
-// import axios from "axios";
+// import api from "../utils/api";
 // import { useNavigate } from "react-router-dom";
 
 // /* ---------------- KPI CARD ---------------- */
@@ -482,9 +482,9 @@
 //         const loadDashboard = async () => {
 //             try {
 //                 const [cRes, iRes, aRes] = await Promise.all([
-//                     axios.get("http://localhost:7000/api/complaint/all"),
-//                     axios.get("http://localhost:7000/api/investigators"),
-//                     axios.get("http://localhost:7000/api/case-activity/recent").catch(() => ({ data: [] }))
+//                     api.get("/api/complaint/all"),
+//                     api.get("/api/investigators"),
+//                     api.get("/api/case-activity/recent").catch(() => ({ data: [] }))
 //                 ]);
 
 //                 setComplaints(cRes.data || []);
@@ -690,7 +690,7 @@
 
 
 // import React, { useEffect, useState } from "react";
-// import axios from "axios";
+// import api from "../utils/api";
 // import { useNavigate } from "react-router-dom";
 
 // /* ---------------- KPI CARD ---------------- */
@@ -713,9 +713,9 @@
 //         const load = async () => {
 //             try {
 //                 const [c, i, a] = await Promise.allSettled([
-//                     axios.get("http://localhost:7000/api/complaint/all"),
-//                     axios.get("http://localhost:7000/api/investigators"),
-//                     axios.get("http://localhost:7000/api/case-activity/recent"),
+//                     api.get("/api/complaint/all"),
+//                     api.get("/api/investigators"),
+//                     api.get("/api/case-activity/recent"),
 //                 ]);
 
 //                 setComplaints(c.value?.data || []);
@@ -930,7 +930,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 /* ---------------- KPI CARD ---------------- */
@@ -954,9 +954,9 @@ export default function AdminDashboard() {
         const load = async () => {
             try {
                 const [c, i, a] = await Promise.allSettled([
-                    axios.get("http://localhost:7000/api/complaint/all"),
-                    axios.get("http://localhost:7000/api/investigators"),
-                    axios.get("http://localhost:7000/api/case-activity/recent"),
+                    api.get("/api/complaint/all"),
+                    api.get("/api/investigators"),
+                    api.get("/api/case-activity/recent"),
                 ]);
 
                 setComplaints(c.value?.data || []);

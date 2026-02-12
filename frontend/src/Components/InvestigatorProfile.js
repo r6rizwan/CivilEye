@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function InvestigatorProfile() {
     const email = localStorage.getItem("email");
@@ -14,8 +14,8 @@ export default function InvestigatorProfile() {
 
     const loadProfile = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `http://localhost:7000/api/investigators/by-email/${email}`
+            const res = await api.get(
+                `/api/investigators/by-email/${email}`
             );
 
             setInvestigator(res.data);
@@ -43,8 +43,8 @@ export default function InvestigatorProfile() {
         setMessage("");
 
         try {
-            await axios.put(
-                `http://localhost:7000/api/investigators/${investigator._id}`,
+            await api.put(
+                `/api/investigators/${investigator._id}`,
                 {
                     phone: form.phone,
                     address: form.address,

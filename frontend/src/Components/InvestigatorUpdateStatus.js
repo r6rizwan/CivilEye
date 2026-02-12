@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api, { API_BASE_URL } from "../utils/api";
 import { Link, useParams, useNavigate } from "react-router-dom";
 
 export default function InvestigatorUpdateStatus() {
@@ -15,8 +15,8 @@ export default function InvestigatorUpdateStatus() {
     useEffect(() => {
         const fetchComplaint = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/complaint/${id}`
+                const res = await api.get(
+                    `/api/complaint/${id}`
                 );
                 setComplaint(res.data);
                 setSolution(res.data.solution || "");
@@ -35,8 +35,8 @@ export default function InvestigatorUpdateStatus() {
     const openCase = async () => {
         setSaving(true);
         try {
-            await axios.put(
-                `http://localhost:7000/api/complaint/${id}/open`
+            await api.put(
+                `/api/complaint/${id}/open`
             );
             // navigate("/investigator/assigned");
         } catch {
@@ -54,8 +54,8 @@ export default function InvestigatorUpdateStatus() {
 
         setSaving(true);
         try {
-            await axios.put(
-                `http://localhost:7000/api/complaint/${id}/resolve`,
+            await api.put(
+                `/api/complaint/${id}/resolve`,
                 { solution }
             );
             navigate("/investigator/assigned");
@@ -138,7 +138,7 @@ export default function InvestigatorUpdateStatus() {
                     {complaint.file && (
                         <Section title="Attached Evidence">
                             <a
-                                href={`http://localhost:7000/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`}
+                                href={`${API_BASE_URL}/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 style={styles.link}

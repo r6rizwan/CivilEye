@@ -1,4 +1,5 @@
 import Register from "../models/Register.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 // STEP 1: Register User + Generate OTP
 export const registerUser = async (req, res) => {
@@ -52,9 +53,14 @@ export const registerUser = async (req, res) => {
             });
         }
 
+        const subject = "Your Crime Report OTP";
+        const text = `Your OTP is ${otp}. It expires in 10 minutes.`;
+        const html = `<p>Your OTP is <strong>${otp}</strong>. It expires in 10 minutes.</p>`;
+
+        await sendEmail({ to: email, subject, text, html });
+
         res.status(201).json({
-            message: "User registered. OTP sent.",
-            otp, // REMOVE THIS IN PRODUCTION
+            message: "User registered. OTP sent to email.",
             email: user.email
         });
 

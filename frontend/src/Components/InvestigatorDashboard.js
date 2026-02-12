@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function InvestigatorDashboard() {
     const [investigator, setInvestigator] = useState(null);
@@ -13,8 +13,8 @@ export default function InvestigatorDashboard() {
 
         const loadInvestigator = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/investigators/by-email/${email}`
+                const res = await api.get(
+                    `/api/investigators/by-email/${email}`
                 );
                 setInvestigator(res.data);
             } catch (err) {
@@ -24,8 +24,8 @@ export default function InvestigatorDashboard() {
 
         const loadStats = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/complaint/investigator/${email}/stats`
+                const res = await api.get(
+                    `/api/complaint/investigator/${email}/stats`
                 );
                 setStats(res.data);
             } catch (err) {
@@ -35,8 +35,8 @@ export default function InvestigatorDashboard() {
 
         const loadComplaints = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/complaint/assigned/${email}`
+                const res = await api.get(
+                    `/api/complaint/assigned/${email}`
                 );
                 setComplaints(res.data);
             } catch (err) {

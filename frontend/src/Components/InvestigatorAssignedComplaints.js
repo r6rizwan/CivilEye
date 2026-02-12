@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function InvestigatorAssignedComplaints() {
@@ -13,8 +13,8 @@ export default function InvestigatorAssignedComplaints() {
     useEffect(() => {
         const fetchAssignedComplaints = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/complaint/assigned/${email}`
+                const res = await api.get(
+                    `/api/complaint/assigned/${email}`
                 );
                 setComplaints(res.data);
             } catch {

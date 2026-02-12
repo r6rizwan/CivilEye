@@ -2,9 +2,10 @@ import express from "express";
 import Investigator from "../models/Investigator.js";
 import Login from "../models/Login.js";
 import bcrypt from "bcryptjs";
+import { authenticateToken, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
-router.post("/create-temp-investigator", async (req, res) => {
+router.post("/create-temp-investigator", authenticateToken, requireRole(["Admin"]), async (req, res) => {
     try {
         const {
             investigatorId,

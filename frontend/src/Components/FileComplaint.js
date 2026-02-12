@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function FileComplaint() {
     const [form, setForm] = useState({
@@ -49,7 +49,7 @@ export default function FileComplaint() {
                 formData.append("file", form.file);
             }
 
-            const res = await axios.post("http://localhost:7000/api/complaint", formData, {
+            const res = await api.post("/api/complaint", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 

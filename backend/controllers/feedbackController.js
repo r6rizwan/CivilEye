@@ -3,6 +3,14 @@ import Feedback from "../models/Feedback.js";
 // Add feedback
 export const createFeedback = async (req, res) => {
     try {
+        if (req.user?.role === "User") {
+            const userEmail = (req.user.email || "").toLowerCase();
+            const bodyEmail = (req.body.email || "").toLowerCase();
+            if (!userEmail || userEmail !== bodyEmail) {
+                return res.status(403).json({ error: "Forbidden" });
+            }
+        }
+
         const feedback = await Feedback.create(req.body);
         res.status(201).json({
             message: "Feedback submitted successfully",

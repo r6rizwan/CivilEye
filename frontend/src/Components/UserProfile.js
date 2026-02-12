@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function UserProfile() {
     const email = localStorage.getItem("email");
@@ -18,8 +18,8 @@ export default function UserProfile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/profile/${email}`
+                const res = await api.get(
+                    `/api/profile/${email}`
                 );
 
                 setProfile(res.data);
@@ -41,8 +41,8 @@ export default function UserProfile() {
         setMessage("");
 
         try {
-            await axios.put(
-                `http://localhost:7000/api/profile/${email}`,
+            await api.put(
+                `/api/profile/${email}`,
                 form
             );
 

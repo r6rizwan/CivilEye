@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api, { API_BASE_URL } from "../utils/api";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function AdminCaseFiles() {
@@ -17,8 +17,8 @@ export default function AdminCaseFiles() {
 
     const fetchCaseFiles = async () => {
         try {
-            const res = await axios.get(
-                `http://localhost:7000/api/case-files/${complaintId}`
+            const res = await api.get(
+                `/api/case-files/${complaintId}`
             );
             setCaseFile(res.data);
         } catch (err) {
@@ -70,7 +70,7 @@ export default function AdminCaseFiles() {
                     caseFile.files.map((file, index) => (
                         <a
                             key={index}
-                            href={`http://localhost:7000/uploads/${String(file.filename).replace(/\\/g, "/").replace(/^\/+/, "")}`}
+                            href={`${API_BASE_URL}/uploads/${String(file.filename).replace(/\\/g, "/").replace(/^\/+/, "")}`}
                             target="_blank"
                             rel="noreferrer"
                             style={styles.fileLink}

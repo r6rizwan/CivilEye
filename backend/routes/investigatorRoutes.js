@@ -8,26 +8,29 @@ import {
     getInvestigatorByEmail,
     sendOtp,
     verifyOtp,
+    getInvestigatorPasswordStatus,
 } from "../controllers/investigatorController.js";
+import { authenticateToken, requireRole, requireSelfEmailOrRole, requireSelfIdOrRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // CREATE investigator (Admin)
-router.post("/", createInvestigator);
+router.post("/", authenticateToken, requireRole(["Admin"]), createInvestigator);
 
 // OTP AUTH (Investigator)
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
+router.post("/password-status", getInvestigatorPasswordStatus);
 
 // READ
-router.get("/", getInvestigators);
-router.get("/by-email/:email", getInvestigatorByEmail);
-router.get("/:id", getInvestigatorById);
+router.get("/", authenticateToken, requireRole(["Admin"]), getInvestigators);
+router.get("/by-email/:email", authenticateToken, requireSelfEmailOrRole(["Admin"]), getInvestigatorByEmail);
+router.get("/:id", authenticateToken, requireSelfIdOrRole(["Admin"]), getInvestigatorById);
 
 // UPDATE
-router.put("/:id", updateInvestigator);
+router.put("/:id", authenticateToken, requireSelfIdOrRole(["Admin"]), updateInvestigator);
 
 // DELETE
-router.delete("/:id", deleteInvestigator);
+router.delete("/:id", authenticateToken, requireRole(["Admin"]), deleteInvestigator);
 
 export default router;

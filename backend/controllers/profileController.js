@@ -6,6 +6,14 @@ export const createProfile = async (req, res) => {
     try {
         const { email, fullName, utype } = req.body;
 
+        if (req.user?.role === "User") {
+            const userEmail = (req.user.email || "").toLowerCase();
+            const bodyEmail = (email || "").toLowerCase();
+            if (!userEmail || userEmail !== bodyEmail) {
+                return res.status(403).json({ error: "Forbidden" });
+            }
+        }
+
         const exists = await Profile.findOne({ email });
         if (exists) {
             return res.status(400).json({ error: "Profile already exists" });
@@ -27,10 +35,27 @@ export const createProfile = async (req, res) => {
 // Get profile
 export const getProfile = async (req, res) => {
     try {
-        const profile = await Profile.findOne({ email: req.params.email });
+        const email = req.params.email;
+        let profile = await Profile.findOne({ email });
 
-        if (!profile)
-            return res.status(404).json({ error: "Profile not found" });
+        if (!profile) {
+            const reg = await Register.findOne({ email });
+            if (!reg || !reg.isVerified) {
+                return res.status(404).json({ error: "Profile not found" });
+            }
+
+            profile = await Profile.create({
+                email,
+                fullName: reg.fullName,
+                phone: reg.mobileNo || "",
+                gender: reg.gender || "",
+                dob: reg.dob || "",
+                address: reg.address || "",
+                city: reg.city || "",
+                pincode: reg.pincode || "",
+                utype: "User",
+            });
+        }
 
         res.json(profile);
     } catch (error) {

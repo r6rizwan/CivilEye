@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import api, { API_BASE_URL } from "../utils/api";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function AdminComplaintDetails() {
@@ -20,23 +20,23 @@ export default function AdminComplaintDetails() {
     /* ---------------- Fetchers ---------------- */
 
     const fetchComplaint = useCallback(async () => {
-        const res = await axios.get(
-            `http://localhost:7000/api/complaint/${id}`
+        const res = await api.get(
+            `/api/complaint/${id}`
         );
         setComplaint(res.data);
     }, [id]);
 
     const fetchInvestigators = useCallback(async () => {
-        const res = await axios.get(
-            "http://localhost:7000/api/investigators"
+        const res = await api.get(
+            "/api/investigators"
         );
         setInvestigators(res.data);
     }, []);
 
     const fetchCaseFiles = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `http://localhost:7000/api/case-files/${id}`
+            const res = await api.get(
+                `/api/case-files/${id}`
             );
             setCaseFile(res.data);
         } catch {
@@ -63,8 +63,8 @@ export default function AdminComplaintDetails() {
     const assignOfficer = async () => {
         if (!selectedOfficer) return alert("Select an investigator");
 
-        await axios.put(
-            `http://localhost:7000/api/complaint/${id}/assign`,
+        await api.put(
+            `/api/complaint/${id}/assign`,
             { assignedTo: selectedOfficer }
         );
 
@@ -76,8 +76,8 @@ export default function AdminComplaintDetails() {
     };
 
     const closeComplaint = async () => {
-        await axios.put(
-            `http://localhost:7000/api/complaint/${id}/close`
+        await api.put(
+            `/api/complaint/${id}/close`
         );
 
         setMessage("Complaint closed successfully");
@@ -142,7 +142,7 @@ export default function AdminComplaintDetails() {
                         <div style={{ marginTop: 12 }}>
                             <div style={styles.key}>Attachment</div>
                             <a
-                                href={`http://localhost:7000/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`}
+                                href={`${API_BASE_URL}/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 style={styles.fileLink}
@@ -242,7 +242,7 @@ export default function AdminComplaintDetails() {
                                 caseFile.files.map((f, i) => (
                                     <a
                                         key={i}
-                                        href={`http://localhost:7000/uploads/${String(f.filename).replace(/\\/g, "/").replace(/^\/+/, "")}`}
+                                        href={`${API_BASE_URL}/uploads/${String(f.filename).replace(/\\/g, "/").replace(/^\/+/, "")}`}
                                         target="_blank"
                                         rel="noreferrer"
                                         style={styles.fileLink}

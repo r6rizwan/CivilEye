@@ -1,5 +1,7 @@
 import Investigator from "../models/Investigator.js";
+import Login from "../models/Login.js";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../utils/sendEmail.js";
 
 const generateInvestigatorId = async () => {
     const lastInvestigator = await Investigator
@@ -44,9 +46,26 @@ export const createInvestigator = async (req, res) => {
             address,
         });
 
+        // Notify investigator to set first password using Forgot Password flow
+        const subject = "Welcome to Crime Report Portal";
+        const text = `Welcome ${name}. Your investigator profile has been created. Visit the login page and use "Set your password" with your registered email: ${email}.`;
+        const html = `
+            <p>Welcome <strong>${name}</strong>,</p>
+            <p>Your investigator profile has been created.</p>
+            <p>Go to the website login screen and select <strong>Set your password</strong> using this email: <strong>${email}</strong>.</p>
+        `;
+
+        let mailWarning = "";
+        try {
+            await sendEmail({ to: email, subject, text, html });
+        } catch {
+            mailWarning = "Investigator created, but welcome email could not be delivered.";
+        }
+
         res.status(201).json({
             message: "Investigator created successfully",
-            investigator
+            investigator,
+            warning: mailWarning || undefined,
         });
 
     } catch (error) {
@@ -54,16 +73,41 @@ export const createInvestigator = async (req, res) => {
     }
 };
 
-// Send OTP to investigator
+export const getInvestigatorPasswordStatus = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ error: "Email is required" });
+        }
+
+        const investigator = await Investigator.findOne({ email });
+        if (!investigator) {
+            return res.status(404).json({ error: "Investigator not found" });
+        }
+
+        const login = await Login.findOne({ email, utype: "Investigator" });
+
+        return res.json({
+            exists: true,
+            hasPassword: Boolean(login),
+            email,
+        });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+// Send OTP to investigator (email-based)
 export const sendOtp = async (req, res) => {
     try {
-        const { phone } = req.body;
+        const { email } = req.body;
 
-        const investigator = await Investigator.findOne({ phone });
+        const investigator = await Investigator.findOne({ email });
 
         if (!investigator) {
             return res.status(404).json({
-                error: "Phone number not registered"
+                error: "Email not registered"
             });
         }
 
@@ -74,10 +118,14 @@ export const sendOtp = async (req, res) => {
 
         await investigator.save();
 
-        // ⚠️ DEV MODE: show OTP
+        const subject = "Your Investigator OTP";
+        const text = `Your OTP is ${otp}. It expires in 5 minutes.`;
+        const html = `<p>Your OTP is <strong>${otp}</strong>. It expires in 5 minutes.</p>`;
+
+        await sendEmail({ to: investigator.email, subject, text, html });
+
         res.json({
-            message: "OTP generated",
-            otp, // REMOVE later when SMS is added
+            message: "OTP sent to email",
         });
 
     } catch (error) {
@@ -88,9 +136,9 @@ export const sendOtp = async (req, res) => {
 // Verify OTP
 export const verifyOtp = async (req, res) => {
     try {
-        const { phone, otp } = req.body;
+        const { email, otp } = req.body;
 
-        const investigator = await Investigator.findOne({ phone });
+        const investigator = await Investigator.findOne({ email });
 
         if (!investigator || investigator.otp !== otp) {
             return res.status(401).json({ error: "Invalid OTP" });
@@ -109,6 +157,7 @@ export const verifyOtp = async (req, res) => {
             {
                 id: investigator._id,
                 role: "Investigator",
+                email: investigator.email,
             },
             process.env.JWT_SECRET,
             { expiresIn: "1d" }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function SetPassword() {
 
@@ -24,7 +24,7 @@ export default function SetPassword() {
         }
 
         try {
-            await axios.post("http://localhost:7000/api/create-password", {
+            await api.post("/api/create-password", {
                 email,
                 password
             });

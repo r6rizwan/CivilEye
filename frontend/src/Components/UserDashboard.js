@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function UserDashboard() {
     const [userName, setUserName] = useState("");
@@ -19,8 +19,8 @@ export default function UserDashboard() {
         const loadData = async () => {
             try {
                 // Fetch user name
-                const userRes = await axios.get(
-                    `http://localhost:7000/api/profile/${email}`
+                const userRes = await api.get(
+                    `/api/profile/${email}`
                 );
                 setUserName(userRes.data?.fullName || "User");
             } catch {
@@ -29,8 +29,8 @@ export default function UserDashboard() {
 
             try {
                 // Fetch complaints
-                const compRes = await axios.get(
-                    `http://localhost:7000/api/complaint/user/${email}`
+                const compRes = await api.get(
+                    `/api/complaint/user/${email}`
                 );
                 const list = compRes.data;
 

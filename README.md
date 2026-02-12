@@ -75,6 +75,16 @@ Create a `.env` file in `backend/`:
 ```
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
+SUPER_ADMIN_EMAIL=superadmin@example.com
+SUPER_ADMIN_PASSWORD=your_super_admin_password
+SUPER_ADMIN_JWT_SECRET=your_super_admin_jwt_secret
+CORS_ORIGIN=http://localhost:3000
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_smtp_user
+SMTP_PASS=your_smtp_password
+SMTP_FROM=no-reply@crimereport.com
+SMTP_SECURE=false
 PORT=7000
 ```
 
@@ -99,6 +109,16 @@ The frontend runs at `http://localhost:3000` and proxies API requests to `http:/
 Backend (`backend/.env`):
 - `MONGO_URI` - MongoDB connection string
 - `JWT_SECRET` - JWT signing secret
+- `SUPER_ADMIN_EMAIL` - super admin login email (source of truth)
+- `SUPER_ADMIN_PASSWORD` - super admin login password (source of truth)
+- `SUPER_ADMIN_JWT_SECRET` - JWT signing secret for super admin tokens
+- `CORS_ORIGIN` - allowed frontend origins (comma-separated)
+- `SMTP_HOST` - SMTP host for OTP email
+- `SMTP_PORT` - SMTP port (587 or 465)
+- `SMTP_USER` - SMTP username
+- `SMTP_PASS` - SMTP password
+- `SMTP_FROM` - From address for OTP emails
+- `SMTP_SECURE` - true/false for SMTPS
 - `PORT` - API port (default 7000)
 
 ## File Uploads

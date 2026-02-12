@@ -1,5 +1,6 @@
 import express from "express";
 import upload from "../middleware/upload.js";
+import { authenticateToken, requireRole, requireSelfEmailOrRole } from "../middleware/auth.js";
 
 import {
     createComplaint,
@@ -20,44 +21,46 @@ const router = express.Router();
 /* ---------------- CREATE ---------------- */
 
 // User files complaint
-router.post("/", upload.single("file"), createComplaint);
+router.post("/", authenticateToken, requireRole(["User"]), upload.single("file"), createComplaint);
 
 /* ---------------- READ ---------------- */
 
 // Admin: all complaints
-router.get("/all", getAllComplaints);
+router.get("/all", authenticateToken, requireRole(["Admin"]), getAllComplaints);
 
 // User: own complaints
-router.get("/user/:email", getUserComplaints);
+router.get("/user/:email", authenticateToken, requireSelfEmailOrRole(["Admin"]), getUserComplaints);
 
 // User-safe complaint tracking
-router.get("/complaint-tracking/:id/:email", trackComplaint);
+router.get("/complaint-tracking/:id/:email", authenticateToken, requireSelfEmailOrRole(["Admin"]), trackComplaint);
 
 // Investigator: assigned complaints
-router.get("/assigned/:email", getComplaintsAssignedToInvestigator);
+router.get("/assigned/:email", authenticateToken, requireSelfEmailOrRole(["Admin"]), getComplaintsAssignedToInvestigator);
 
 // ⭐ Investigator dashboard KPIs
 router.get(
     "/investigator/:email/stats",
+    authenticateToken,
+    requireSelfEmailOrRole(["Admin"]),
     getInvestigatorDashboardStats
 );
 
 // Get complaint by ID (admin / investigator)
 // ❗ keep this AFTER specific routes
-router.get("/:id", getComplaintById);
+router.get("/:id", authenticateToken, requireRole(["Admin", "Investigator", "User"]), getComplaintById);
 
 /* ---------------- ACTIONS ---------------- */
 
 // Admin assigns investigator
-router.put("/:id/assign", assignComplaint);
+router.put("/:id/assign", authenticateToken, requireRole(["Admin"]), assignComplaint);
 
 // Investigator starts working
-router.put("/:id/open", investigatorOpenComplaint);
+router.put("/:id/open", authenticateToken, requireRole(["Investigator"]), investigatorOpenComplaint);
 
 // Investigator resolves complaint
-router.put("/:id/resolve", investigatorResolveComplaint);
+router.put("/:id/resolve", authenticateToken, requireRole(["Investigator"]), investigatorResolveComplaint);
 
 // Admin closes complaint (FINAL)
-router.put("/:id/close", adminCloseComplaint);
+router.put("/:id/close", authenticateToken, requireRole(["Admin"]), adminCloseComplaint);
 
 export default router;

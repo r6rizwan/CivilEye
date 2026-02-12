@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -16,7 +16,7 @@ export default function AdminComplaints() {
 
     const loadComplaints = async () => {
         try {
-            const res = await axios.get("http://localhost:7000/api/complaint/all");
+            const res = await api.get("/api/complaint/all");
             setComplaints(res.data);
         } catch (err) {
             console.error("Fetch error:", err);

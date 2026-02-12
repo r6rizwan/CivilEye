@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function OtpVerify() {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ export default function OtpVerify() {
     setSuccess("");
 
     try {
-      const res = await axios.post("http://localhost:7000/api/verify-otp", {
+      const res = await api.post("/api/verify-otp", {
         email,
         otp,
       });

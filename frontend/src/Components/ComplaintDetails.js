@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api, { API_BASE_URL } from "../utils/api";
 import { useParams } from "react-router-dom";
 
 export default function ComplaintDetails() {
@@ -10,8 +10,8 @@ export default function ComplaintDetails() {
     useEffect(() => {
         const loadComplaint = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/complaint/${id}`
+                const res = await api.get(
+                    `/api/complaint/${id}`
                 );
                 setComplaint(res.data);
             } catch (error) {
@@ -42,7 +42,7 @@ export default function ComplaintDetails() {
 
     // Build a safe public URL for the saved filename (stored as filename by server)
     const fileUrl = complaint && complaint.file
-        ? `http://localhost:7000/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`
+        ? `${API_BASE_URL}/uploads/${String(complaint.file).replace(/\\/g, "/").replace(/^\/+/, "")}`
         : null;
 
     // Encode URL to handle spaces and other unsafe characters

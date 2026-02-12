@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminInvestigators() {
@@ -9,7 +9,7 @@ export default function AdminInvestigators() {
 
     const loadInvestigators = async () => {
         try {
-            const res = await axios.get("http://localhost:7000/api/investigators");
+            const res = await api.get("/api/investigators");
             setInvestigators(res.data);
         } catch (err) {
             console.error("Failed to load investigators", err);
@@ -21,7 +21,7 @@ export default function AdminInvestigators() {
     const toggleStatus = async (id, currentStatus) => {
         const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
         try {
-            await axios.put(`http://localhost:7000/api/investigators/${id}`, {
+            await api.put(`/api/investigators/${id}`, {
                 status: newStatus,
             });
             loadInvestigators();

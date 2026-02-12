@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function MyComplaints() {
     const [complaints, setComplaints] = useState([]);
@@ -12,8 +12,8 @@ export default function MyComplaints() {
 
         const fetchComplaints = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:7000/api/complaint/user/${email}`
+                const res = await api.get(
+                    `/api/complaint/user/${email}`
                 );
                 setComplaints(res.data);
                 setLoading(false);

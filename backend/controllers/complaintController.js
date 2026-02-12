@@ -9,6 +9,14 @@ export const createComplaint = async (req, res) => {
     try {
         const { complaintType, description, email } = req.body;
 
+        if (req.user?.role === "User") {
+            const userEmail = (req.user.email || "").toLowerCase();
+            const bodyEmail = (email || "").toLowerCase();
+            if (!userEmail || userEmail !== bodyEmail) {
+                return res.status(403).json({ error: "Forbidden" });
+            }
+        }
+
         const year = new Date().getFullYear();
 
         // 🔐 Atomic counter per year
@@ -185,6 +193,12 @@ export const investigatorOpenComplaint = async (req, res) => {
             return res.status(404).json({ error: "Complaint not found" });
         }
 
+        if (req.user?.role === "Investigator") {
+            if (complaint.assignedTo !== req.user.email) {
+                return res.status(403).json({ error: "Not authorized for this case" });
+            }
+        }
+
         if (complaint.status !== "Assigned") {
             return res.status(400).json({
                 error: "Only assigned complaints can be opened"
@@ -230,6 +244,12 @@ export const investigatorResolveComplaint = async (req, res) => {
         const complaint = await Complaint.findById(id);
         if (!complaint) {
             return res.status(404).json({ error: "Complaint not found" });
+        }
+
+        if (req.user?.role === "Investigator") {
+            if (complaint.assignedTo !== req.user.email) {
+                return res.status(403).json({ error: "Not authorized for this case" });
+            }
         }
 
         if (complaint.status !== "Open") {
@@ -307,6 +327,22 @@ export const getUserComplaints = async (req, res) => {
 export const getComplaintById = async (req, res) => {
     try {
         const complaint = await Complaint.findById(req.params.id);
+        if (!complaint) {
+            return res.status(404).json({ error: "Complaint not found" });
+        }
+
+        if (req.user?.role === "User") {
+            if (complaint.email !== req.user.email) {
+                return res.status(403).json({ error: "Forbidden" });
+            }
+        }
+
+        if (req.user?.role === "Investigator") {
+            if (complaint.assignedTo !== req.user.email) {
+                return res.status(403).json({ error: "Forbidden" });
+            }
+        }
+
         res.json(complaint);
     } catch {
         res.status(404).json({ error: "Complaint not found" });

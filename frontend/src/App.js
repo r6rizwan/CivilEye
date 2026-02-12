@@ -7,6 +7,9 @@ import Register from "./Components/Register";
 import OtpVerify from "./Components/OtpVerify";
 import Login from "./Components/Login";
 import SetPassword from "./Components/SetPassword";
+import ForgotPassword from "./Components/ForgotPassword";
+import OtpScreen from "./Components/OtpScreen";
+import ResetPassword from "./Components/ResetPassword";
 
 import UserLayout from "./Layouts/UserLayout";
 import AdminLayout from "./Layouts/AdminLayout";
@@ -34,6 +37,8 @@ import InvestigatorLogin from "./Components/InvestigatorLogin";
 import InvestigatorProfile from "./Components/InvestigatorProfile";
 import AboutPage from "./Components/AboutPage";
 import ContactPage from "./Components/ContactPage";
+import SuperAdminLogin from "./Components/superAdmin/SuperAdminLogin";
+import AdminManager from "./Components/superAdmin/AdminManager";
 
 
 function App() {
@@ -48,8 +53,13 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/otp" element={<OtpVerify />} />
         <Route path="/set-password" element={<SetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/otp-verify" element={<OtpScreen />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/aboutpage" element={<AboutPage/>}/>
         <Route path="/contactpage" element={<ContactPage/>}/>
+        <Route path="/super-admin/login" element={<SuperAdminLogin />} />
+        <Route path="/super-admin/admins" element={<AdminManager />} />
 
         {/* USER ROUTES */}
         <Route

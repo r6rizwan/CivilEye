@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api, { API_BASE_URL } from "../utils/api";
 import { useParams } from "react-router-dom";
 
 export default function InvestigatorCaseFiles() {
@@ -20,8 +20,8 @@ export default function InvestigatorCaseFiles() {
 
     const fetchCaseFiles = async () => {
         try {
-            const res = await axios.get(
-                `http://localhost:7000/api/case-files/${complaintId}`
+            const res = await api.get(
+                `/api/case-files/${complaintId}`
             );
             setCaseFile(res.data);
             setNotes(res.data.notes || "");
@@ -50,8 +50,8 @@ export default function InvestigatorCaseFiles() {
         });
 
         try {
-            const res = await axios.post(
-                `http://localhost:7000/api/case-files/${complaintId}`,
+            const res = await api.post(
+                `/api/case-files/${complaintId}`,
                 formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
@@ -103,7 +103,7 @@ export default function InvestigatorCaseFiles() {
                         caseFile.files.map((f, i) => (
                             <a
                                 key={i}
-                                href={`http://localhost:7000/uploads/${String(f.filename).replace(/\\/g, "/").replace(/^\/+/, "")}`}
+                                href={`${API_BASE_URL}/uploads/${String(f.filename).replace(/\\/g, "/").replace(/^\/+/, "")}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 style={styles.fileLink}

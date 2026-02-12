@@ -3,13 +3,14 @@ import {
     getRecentCaseActivity,
     getComplaintTimeline
 } from "../controllers/caseActivityController.js";
+import { authenticateToken, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Admin dashboard
-router.get("/recent", getRecentCaseActivity);
+router.get("/recent", authenticateToken, requireRole(["Admin"]), getRecentCaseActivity);
 
 // Complaint timeline
-router.get("/:complaintId", getComplaintTimeline);
+router.get("/:complaintId", authenticateToken, requireRole(["Admin"]), getComplaintTimeline);
 
 export default router;

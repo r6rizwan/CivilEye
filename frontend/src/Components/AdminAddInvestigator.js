@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminAddInvestigator() {
@@ -30,7 +30,7 @@ export default function AdminAddInvestigator() {
         setError("");
 
         try {
-            await axios.post("http://localhost:7000/api/investigators", {
+            await api.post("/api/investigators", {
                 name: form.name,
                 email: form.email,
                 phone: form.phone,
@@ -55,8 +55,8 @@ export default function AdminAddInvestigator() {
                     <p style={styles.eyebrow}>Admin Setup</p>
                     <h2 style={styles.sideTitle}>Create investigator profiles.</h2>
                     <p style={styles.sideText}>
-                        New investigators receive OTP-based access and are assigned
-                        to incoming cases once activated.
+                        New investigators receive access after setting their password
+                        on first login and are assigned to incoming cases once activated.
                     </p>
                     <div style={styles.infoBox}>
                         <p><strong>Status:</strong> Active (default)</p>
@@ -71,7 +71,7 @@ export default function AdminAddInvestigator() {
                     <h2 style={styles.title}>Add Investigator</h2>
                     <p style={styles.subtitle}>
                         Create a basic investigator account. Authentication will be
-                        handled using OTP during login.
+                        handled using email and password (set on first login).
                     </p>
 
                     {error && <div style={styles.error}>{error}</div>}
@@ -111,10 +111,8 @@ export default function AdminAddInvestigator() {
                                 placeholder="10-digit mobile number"
                                 style={styles.input}
                             />
-                            <small style={styles.helper}>
-                                This number will be used for OTP-based login.
-                            </small>
                         </div>
+
 
                         <div style={styles.field}>
                             <label>Posting / Location (optional)</label>

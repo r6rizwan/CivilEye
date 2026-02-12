@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function Register() {
     const [form, setForm] = useState({
@@ -29,10 +29,9 @@ export default function Register() {
         setSuccess("");
 
         try {
-            const res = await axios.post("http://localhost:7000/api/register", form);
+            await api.post("/api/register", form);
 
-            setSuccess("Registration successful! Verify OTP.");
-            alert(`OTP for testing: ${res.data.otp}`);
+            setSuccess("Registration successful! OTP sent to email.");
 
             setTimeout(() => {
                 window.location.href = "/otp";

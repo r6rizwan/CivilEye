@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api, { API_BASE_URL } from "../utils/api";
 
 const TIMELINE_STEPS = [
     { key: "createdAt", label: "Filed" },
@@ -36,8 +36,8 @@ export default function ComplaintTracking() {
         const email = localStorage.getItem("email");
 
         try {
-            const res = await axios.get(
-                `http://localhost:7000/api/complaint/complaint-tracking/${queryId}/${email}`
+            const res = await api.get(
+                `/api/complaint/complaint-tracking/${queryId}/${email}`
             );
             setResult(res.data);
         } catch (err) {
@@ -180,7 +180,7 @@ export default function ComplaintTracking() {
                         {result.file && (
                             <div style={{ marginTop: 20 }}>
                                 <a
-                                    href={`http://localhost:7000/uploads/${String(result.file).replace(/\\/g, "/").replace(/^\/+/, "")}`}
+                                    href={`${API_BASE_URL}/uploads/${String(result.file).replace(/\\/g, "/").replace(/^\/+/, "")}`}
                                     target="_blank"
                                     rel="noreferrer"
                                     style={styles.link}
