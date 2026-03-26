@@ -2,7 +2,7 @@
 
 Crime Reporting Portal
 
-A full-stack web application for secure crime reporting, case tracking, and role-based case management. CivilEye supports citizens filing complaints, investigators managing assignments, and admins overseeing the workflow.
+A full-stack MERN web application for secure crime reporting, case tracking, and role-based case management. CivilEye supports citizens filing complaints, investigators managing assignments, admins overseeing the workflow, and super admins managing admin credentials.
 
 ## Overview
 
@@ -33,6 +33,12 @@ This repository contains two apps:
 - Manage investigators (add, enable/disable)
 - View case files and timelines
 
+### Super Admin
+- Log in using environment-based super admin credentials
+- Create and manage admin accounts
+- Reset admin passwords
+- Erase system data for a clean demo reset while keeping admin access intact
+
 ## Tech Stack
 
 **Frontend**
@@ -62,6 +68,7 @@ Detailed backend module map:
 Frontend component grouping:
 - `frontend/src/Components/public`
 - `frontend/src/Components/auth`
+- `frontend/src/Components/common`
 - `frontend/src/Components/user`
 - `frontend/src/Components/admin`
 - `frontend/src/Components/investigator`
@@ -92,6 +99,8 @@ npm install
 
 Create a `.env` file in `backend/`:
 
+Copy `backend/.env.example` to `backend/.env` and fill in the values:
+
 ``` 
 MONGO_URI=your_mongodb_connection_string
 PORT=5000
@@ -117,6 +126,8 @@ npm run dev
 ### 3. Frontend setup
 
 Create a `.env` file in `frontend/`:
+
+Copy `frontend/.env.example` to `frontend/.env` and fill in the values:
 
 ```
 REACT_APP_API_URL=http://localhost:5000
@@ -175,14 +186,6 @@ Evidence files are stored locally in `backend/uploads/`. Accepted formats:
 - `npm start` – run dev server
 - `npm run build` – build for production
 
-## Roadmap Ideas
-
-- Add centralized API configuration in frontend
-- Add server-side validation (Joi/Zod)
-- Add tests for controllers and UI flows
-- Improve accessibility and keyboard navigation
-- Add notifications and email integration
-
 ## License
 
-This project is currently not licensed. Add a license if you plan to open-source it.
+This project is licensed under the MIT License.
